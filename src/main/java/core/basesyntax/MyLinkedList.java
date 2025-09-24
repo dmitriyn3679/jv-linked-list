@@ -3,26 +3,18 @@ package core.basesyntax;
 import java.util.List;
 
 public class MyLinkedList<T> implements MyLinkedListInterface<T> {
-    private static class Node<T> {
-        private T value;
-        private Node<T> prev;
-        private Node<T> next;
-
-        Node(Node<T> prev, T value, Node<T> next) {
-            this.value = value;
-            this.prev = prev;
-            this.next = next;
-        }
-    }
-
     private Node<T> head;
     private Node<T> tail;
     private int size;
 
+    // --------------------
+    // Public API
+    // --------------------
+
     @Override
     public void add(T value) {
         Node<T> newNode = new Node<>(tail, value, null);
-        if (tail == null) { // список пустий
+        if (tail == null) {
             head = newNode;
         } else {
             tail.next = newNode;
@@ -34,7 +26,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
     @Override
     public void add(T value, int index) {
         checkIndexForAdd(index);
-        if (index == size) { // додаємо в кінець
+        if (index == size) {
             add(value);
             return;
         }
@@ -52,8 +44,8 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public void addAll(List<T> list) {
-        for (T element : list) {
-            add(element);
+        for (T e : list) {
+            add(e);
         }
     }
 
@@ -64,24 +56,24 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public T set(T value, int index) {
-        Node<T> current = node(index);
-        T oldValue = current.value;
-        current.value = value;
-        return oldValue;
+        Node<T> n = node(index);
+        T old = n.value;
+        n.value = value;
+        return old;
     }
 
     @Override
     public T remove(int index) {
-        Node<T> toRemove = node(index);
-        return unlink(toRemove);
+        Node<T> n = node(index);
+        return unlink(n);
     }
 
     @Override
     public boolean remove(T object) {
-        for (Node<T> current = head; current != null; current = current.next) {
-            if ((object == null && current.value == null)
-                    || (object != null && object.equals(current.value))) {
-                unlink(current);
+        for (Node<T> cur = head; cur != null; cur = cur.next) {
+            if ((object == null && cur.value == null)
+                    || (object != null && object.equals(cur.value))) {
+                unlink(cur);
                 return true;
             }
         }
@@ -98,27 +90,27 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         return size == 0;
     }
 
+    // --------------------
+    // Private helpers
+    // --------------------
+
     private Node<T> node(int index) {
         checkIndex(index);
-        if (index < (size >> 1)) { // ближче до head
-            Node<T> current = head;
-            for (int i = 0; i < index; i++) {
-                current = current.next;
-            }
-            return current;
-        } else { // ближче до tail
-            Node<T> current = tail;
-            for (int i = size - 1; i > index; i--) {
-                current = current.prev;
-            }
-            return current;
+        if (index < (size >>> 1)) {
+            Node<T> cur = head;
+            for (int i = 0; i < index; i++) cur = cur.next;
+            return cur;
+        } else {
+            Node<T> cur = tail;
+            for (int i = size - 1; i > index; i--) cur = cur.prev;
+            return cur;
         }
     }
 
-    private T unlink(Node<T> node) {
-        final T element = node.value;
-        final Node<T> next = node.next;
-        final Node<T> prev = node.prev;
+    private T unlink(Node<T> n) {
+        T element = n.value;
+        Node<T> next = n.next;
+        Node<T> prev = n.prev;
 
         if (prev == null) {
             head = next;
@@ -132,22 +124,40 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
             next.prev = prev;
         }
 
-        node.value = null;
-        node.next = null;
-        node.prev = null;
+        // help GC
+        n.value = null;
+        n.next = null;
+        n.prev = null;
+
         size--;
         return element;
     }
 
     private void checkIndex(int index) {
         if (index < 0 || index >= size) {
-            throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
     }
 
     private void checkIndexForAdd(int index) {
         if (index < 0 || index > size) {
-            throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+    }
+
+    // --------------------
+    // Inner class at the end
+    // --------------------
+
+    private static class Node<T> {
+        private T value;
+        private Node<T> prev;
+        private Node<T> next;
+
+        private Node(Node<T> prev, T value, Node<T> next) {
+            this.value = value;
+            this.prev = prev;
+            this.next = next;
         }
     }
 }
