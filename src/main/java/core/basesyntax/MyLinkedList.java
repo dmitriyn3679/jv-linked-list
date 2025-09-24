@@ -112,7 +112,6 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
     }
 
     private T unlink(Node<T> n) {
-        T element = n.value;
         Node<T> next = n.next;
         Node<T> prev = n.prev;
 
@@ -127,6 +126,9 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         } else {
             next.prev = prev;
         }
+
+        // Оголошуємо елемент безпосередньо перед очищенням і поверненням
+        final T element = n.value;
 
         // help GC
         n.value = null;
