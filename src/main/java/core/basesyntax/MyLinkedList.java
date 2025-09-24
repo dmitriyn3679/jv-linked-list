@@ -44,8 +44,8 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public void addAll(List<T> list) {
-        for (T e : list) {
-            add(e);
+        for (T element : list) {
+            add(element);
         }
     }
 
@@ -56,24 +56,24 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public T set(T value, int index) {
-        Node<T> n = node(index);
-        T old = n.value;
-        n.value = value;
-        return old;
+        Node<T> targetNode = node(index);
+        T oldValue = targetNode.value;
+        targetNode.value = value;
+        return oldValue;
     }
 
     @Override
     public T remove(int index) {
-        Node<T> n = node(index);
-        return unlink(n);
+        Node<T> targetNode = node(index);
+        return unlink(targetNode);
     }
 
     @Override
     public boolean remove(T object) {
-        for (Node<T> cur = head; cur != null; cur = cur.next) {
-            if ((object == null && cur.value == null)
-                    || (object != null && object.equals(cur.value))) {
-                unlink(cur);
+        for (Node<T> current = head; current != null; current = current.next) {
+            if ((object == null && current.value == null)
+                    || (object != null && object.equals(current.value))) {
+                unlink(current);
                 return true;
             }
         }
@@ -97,23 +97,19 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
     private Node<T> node(int index) {
         checkIndex(index);
         if (index < (size >>> 1)) {
-            Node<T> cur = head;
-            for (int i = 0; i < index; i++) {
-                cur = cur.next;
-            }
-            return cur;
+            Node<T> current = head;
+            for (int i = 0; i < index; i++) current = current.next;
+            return current;
         } else {
-            Node<T> cur = tail;
-            for (int i = size - 1; i > index; i--) {
-                cur = cur.prev;
-            }
-            return cur;
+            Node<T> current = tail;
+            for (int i = size - 1; i > index; i--) current = current.prev;
+            return current;
         }
     }
 
-    private T unlink(Node<T> n) {
-        Node<T> next = n.next;
-        Node<T> prev = n.prev;
+    private T unlink(Node<T> node) {
+        Node<T> next = node.next;
+        Node<T> prev = node.prev;
 
         if (prev == null) {
             head = next;
@@ -127,13 +123,12 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
             next.prev = prev;
         }
 
-        // Оголошуємо елемент безпосередньо перед очищенням і поверненням
-        final T element = n.value;
+        final T element = node.value;
 
         // help GC
-        n.value = null;
-        n.next = null;
-        n.prev = null;
+        node.value = null;
+        node.next = null;
+        node.prev = null;
 
         size--;
         return element;
