@@ -98,11 +98,15 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         checkIndex(index);
         if (index < (size >>> 1)) {
             Node<T> current = head;
-            for (int i = 0; i < index; i++) current = current.next;
+            for (int i = 0; i < index; i++) {
+                current = current.next;
+            }
             return current;
         } else {
             Node<T> current = tail;
-            for (int i = size - 1; i > index; i--) current = current.prev;
+            for (int i = size - 1; i > index; i--) {
+                current = current.prev;
+            }
             return current;
         }
     }
